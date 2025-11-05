@@ -14,6 +14,6 @@ router.get("/api/clients", getClients)
 router.get("/api/clients/:id", getClientPorId)
 router.post("/api/clients", createClient);
 router.put("/api/clients/:id", updateClient);
-router.delete("/api/cliente/:id",deleteClient);
+router.delete("/api/clients/:id",deleteClient);
 
 export default router;
