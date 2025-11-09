@@ -1,4 +1,3 @@
-import Client from "../Model/client";
 import client from "../Model/client"
 
 export const getClients = async (req, res) => {
