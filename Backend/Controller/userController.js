@@ -1,7 +1,6 @@
 import User from "../Model/User.js"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
-import { sendPasswordRecoveryEmail } from "../Service/emailService.js"
 
 export const getUsers = async (req,res) => {
     try {
@@ -146,12 +145,8 @@ export const recoverPassword = async (req, res) => {
     // Atualizar senha no banco
     await User.findByIdAndUpdate(user._id, { password: hashedPassword });
 
-    // Tentar enviar e-mail, mas não falhar se não conseguir
-    try {
-      await sendPasswordRecoveryEmail(user.email, newPassword);
-    } catch (emailError) {
-      console.error("Erro ao enviar e-mail, mas senha foi alterada:", emailError.message);
-    }
+    // Simula envio de email (apenas log)
+    console.log(`📧 Nova senha para ${user.email}: ${newPassword}`);
 
     res.json({ message: "Nova senha gerada com sucesso. Verifique seu e-mail (se configurado)." });
   } catch (error) {
