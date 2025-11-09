@@ -1,4 +1,6 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import validator from 'validator';
 
 const addressSchema = new mongoose.Schema({
   street: {
@@ -39,7 +41,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'CPF é obrigatório'],
     unique: true,
-    trim: true
+    trim: true,
+    validate: {
+      validator: function(v) {
+        return /^\d{11}$/.test(v);
+      },
+      message: 'CPF deve ter 11 dígitos numéricos'
+    }
   },
   birthDate: {
     type: Date,
@@ -50,7 +58,11 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Email é obrigatório'],
     unique: true,
     trim: true,
-    lowercase: true
+    lowercase: true,
+    validate: {
+      validator: validator.isEmail,
+      message: 'Email inválido'
+    }
   },
   password: {
     type: String,
@@ -65,6 +77,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Telefone é obrigatório'],
     trim: true
+  },
+  role: {
+    type: String,
+    enum: ['user', 'manager'],
+    default: 'user'
   }
 }, {
   timestamps: true
@@ -76,4 +93,8 @@ userSchema.methods.toJSON = function() {
   return user;
 };
 
-module.exports = mongoose.model('User', userSchema);
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+export default mongoose.model('User', userSchema);

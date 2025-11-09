@@ -1,22 +1,57 @@
 import express from "express";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
+import connectDB from "./Backend/Config/MongoConnect.js";
+import userRoute from "./Backend/Routes/userRoute.js";
 
 dotenv.config();
 
+connectDB();
 
 const app = express();
 app.use(express.json());
 
+// Swagger configuration
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'API de Usuários',
+      version: '1.0.0',
+      description: 'API para gerenciamento de usuários com autenticação',
+    },
+    servers: [
+      {
+        url: 'http://localhost:3000',
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+  },
+  apis: ['./Backend/Routes/*.js'], // Caminhos para as rotas
+};
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Conectado ao MongoDB"))
-  .catch(err => console.error("❌ Erro:", err));
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// Routes
+app.use('/', userRoute);
 
 app.get("/", (req, res) => {
-  res.send("Servidor funcionando!");
+  res.send("Servidor funcionando! Acesse /api-docs para a documentação Swagger.");
 });
-
 
 app.listen(3000, () => console.log("🚀 Servidor rodando na porta 3000"));
