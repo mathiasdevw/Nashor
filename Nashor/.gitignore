@@ -1,0 +1,4 @@
+# Ignora as pastas desejadas
+node_modules
+.env
+.env.*
