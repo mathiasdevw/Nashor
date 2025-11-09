@@ -1,6 +1,7 @@
 import User from "../Model/User.js"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
+import { sendPasswordRecoveryEmail } from "../Service/emailService.js"
 
 export const getUsers = async (req,res) => {
     try {
@@ -122,5 +123,38 @@ export const loginUser = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Erro ao fazer login", error: error.message });
+  }
+};
+
+export const recoverPassword = async (req, res) => {
+  try {
+    const { email, cpf } = req.body;
+
+    if (!email || !cpf) {
+      return res.status(400).json({ message: "Email e CPF são obrigatórios" });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase(), cpf });
+    if (!user) {
+      return res.status(404).json({ message: "Usuário não encontrado com essas credenciais" });
+    }
+
+    // Gerar nova senha aleatória
+    const newPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+    const hashedPassword = await bcrypt.hash(newPassword, 6);
+
+    // Atualizar senha no banco
+    await User.findByIdAndUpdate(user._id, { password: hashedPassword });
+
+    // Tentar enviar e-mail, mas não falhar se não conseguir
+    try {
+      await sendPasswordRecoveryEmail(user.email, newPassword);
+    } catch (emailError) {
+      console.error("Erro ao enviar e-mail, mas senha foi alterada:", emailError.message);
+    }
+
+    res.json({ message: "Nova senha gerada com sucesso. Verifique seu e-mail (se configurado)." });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao recuperar senha", error: error.message });
   }
 };

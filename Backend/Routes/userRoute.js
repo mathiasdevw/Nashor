@@ -7,6 +7,7 @@ import {
     deleteUser,
     loginUser,
     registerUser,
+    recoverPassword,
 } from "../Controller/userController.js"
 import { authenticateToken } from "../Middleware/authMiddleware.js"
 import { authenticateManager } from "../Middleware/managerMiddleware.js"
@@ -228,8 +229,39 @@ router.get("/api/users/:id", authenticateManager, getUserPorId)
  *       400:
  *         description: Erro no registro do usuário
  */
+/**
+ * @swagger
+ * /api/recover-password:
+ *   post:
+ *     summary: Recupera senha do usuário
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - cpf
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: Email do usuário
+ *               cpf:
+ *                 type: string
+ *                 description: CPF do usuário
+ *     responses:
+ *       200:
+ *         description: Nova senha enviada por e-mail
+ *       400:
+ *         description: Dados obrigatórios não fornecidos
+ *       404:
+ *         description: Usuário não encontrado
+ */
 router.post("/api/users", authenticateManager, createUser)
 router.post("/api/register", registerUser)
+router.post("/api/recover-password", recoverPassword)
 
 /**
  * @swagger
