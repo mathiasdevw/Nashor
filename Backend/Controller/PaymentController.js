@@ -50,7 +50,7 @@ export const createCheckoutSession = async (req, res) => {
         cartId: cart._id.toString(),
       },
       
-      // Pega o e-mail do usuário logado (assumindo que seu middleware o fornece)
+      // Pega o e-mail do usuário logado
       customer_email: req.user.email,
 
       success_url: `${process.env.REDIRECT_URL}/sucesso?session_id={CHECKOUT_SESSION_ID}`,
