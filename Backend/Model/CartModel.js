@@ -18,6 +18,11 @@ const CartSchema = new Schema(
           ref: 'Products',
           required: true, 
         },
+        
+        size: {
+          type: String,
+          required: [true, 'O tamanho é obrigatório'],
+        },
         quantity: {
           type: Number,
           required: true, 

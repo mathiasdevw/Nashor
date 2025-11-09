@@ -16,11 +16,20 @@ const ProductsSchema = new Schema(
       type: Number,
       required: [true, 'Preço e obrigatorio'],
     },
-    quantity: {
-      type: Number,
-      required: [true, 'Quantidade e obrigatorio'],
-      default: 0,
-    },
+    sizes: [
+      {
+        size: {
+          type: String, 
+          required: true,
+        },
+        quantity: { // Estoque para o tamanho específico
+          type: Number,
+          required: true,
+          default: 0,
+        },
+      },
+    ],
+    
     photo: {
       type: String,
       required: false,
