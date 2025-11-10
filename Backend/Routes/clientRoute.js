@@ -220,6 +220,8 @@ router.get("/clients", authenticateManager, getClients)
  *       404:
  *         description: Cliente não encontrado
  */
+router.get("/clients/me", authenticateToken, getClientProfile)
+
 router.get("/clients/:id", authenticateManager, getClientPorId)
 
 /**
@@ -360,31 +362,30 @@ router.put("/clients/:id", authenticateManager, updateClient)
  */
 router.delete("/clients/:id", authenticateManager, deleteClient)
 
+
+
 /**
  * @swagger
- * /api/clients/me:
- *   get:
- *     summary: Obtém o perfil do cliente autenticado
+ * /api/create-user-pf:
+ *   post:
+ *     summary: Cria um usuário PF (Pessoa Física)
  *     tags: [Clients]
- *     security:
- *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ClientInput'
  *     responses:
- *       200:
- *         description: Dados do perfil do cliente
+ *       201:
+ *         description: Usuário PF criado com sucesso
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Client'
- *       401:
- *         description: Token não fornecido
- *       404:
- *         description: Cliente não encontrado
+ *       400:
+ *         description: Erro na criação do usuário PF
  */
-router.get("/clients/me", authenticateToken, (req, res, next) => {
-  if (req.user.role !== 'client') {
-    return res.status(403).json({ message: 'Acesso negado. Apenas clientes podem acessar esta rota.' });
-  }
-  next();
-}, getClientProfile)
+router.post("/create-user-pf", registerClient)
 
 export default router;

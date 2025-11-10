@@ -156,6 +156,11 @@ export const recoverPasswordClient = async (req, res) => {
 
 export const getClientProfile = async (req, res) => {
   try {
+    // Para /clients/me, sempre usar o ID do usuário logado, independentemente do role
+    // Mas verificar se o role é 'client'
+    if (req.user.role !== 'client') {
+      return res.status(403).json({ message: "Acesso negado. Apenas clientes podem acessar /clients/me" });
+    }
     const client = await Client.findById(req.user.id);
     if (!client) {
       return res.status(404).json({ message: "Cliente não encontrado" });

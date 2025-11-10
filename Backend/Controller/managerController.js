@@ -156,7 +156,7 @@ export const recoverPasswordManager = async (req, res) => {
 
 export const getManagerProfile = async (req, res) => {
   try {
-    const manager = await Manager.findById(req.manager.id);
+    const manager = await Manager.findById(req.user.id);
     if (!manager) {
       return res.status(404).json({ message: "Manager não encontrado" });
     }
