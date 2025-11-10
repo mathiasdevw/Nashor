@@ -18,7 +18,7 @@ export const authenticateManager = (req, res, next) => {
       return res.status(403).json({ message: 'Acesso negado. Apenas managers podem acessar esta rota.' });
     }
 
-    req.user = decoded;
+    req.manager = decoded;
     next();
   });
 };

@@ -1,21 +1,102 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import validator from 'validator';
+
+const addressSchema = new mongoose.Schema({
+  street: {
+    type: String,
+    required: [true, 'Rua é obrigatória'],
+    trim: true
+  },
+  city: {
+    type: String,
+    required: [true, 'Cidade é obrigatória'],
+    trim: true
+  },
+  state: {
+    type: String,
+    required: [true, 'Estado é obrigatório'],
+    trim: true
+  },
+  zipCode: {
+    type: String,
+    required: [true, 'CEP é obrigatório'],
+    trim: true
+  },
+  country: {
+    type: String,
+    default: 'Brasil',
+    trim: true
+  }
+});
 
 const clientSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    required: [true, 'Nome é obrigatório'],
+    trim: true,
+    minlength: [2, 'O Nome deve ter pelo menos 2 caracteres']
+  },
+  cpf: {
+    type: String,
+    required: [true, 'CPF é obrigatório'],
+    unique: true,
+    trim: true,
+    validate: {
+      validator: function(v) {
+        return /^\d{11}$/.test(v);
+      },
+      message: 'CPF deve ter 11 dígitos numéricos'
+    }
+  },
+  birthDate: {
+    type: Date,
+    required: [true, 'Data de nascimento é obrigatória']
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email é obrigatório'],
     unique: true,
+    trim: true,
+    lowercase: true,
+    validate: {
+      validator: validator.isEmail,
+      message: 'Email inválido'
+    }
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
+  password: {
+    type: String,
+    required: [true, 'Senha é obrigatória'],
+    minlength: [6, 'Senha deve ter pelo menos 6 caracteres']
   },
+  address: {
+    type: addressSchema,
+    required: [true, 'Endereço é obrigatório']
+  },
+  phone: {
+    type: String,
+    required: [true, 'Telefone é obrigatório'],
+    trim: true
+  },
+  role: {
+    type: String,
+    enum: ['client'],
+    default: 'client'
+  }
+}, {
+  timestamps: true
 });
 
-const Client = mongoose.model("Client", clientSchema);
+clientSchema.methods.toJSON = function() {
+  const client = this.toObject();
+  delete client.password;
+  return client;
+};
+
+clientSchema.methods.comparePassword = async function(candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+const Client = mongoose.model('Client', clientSchema);
 
 export default Client;

@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import connectDB from "./Backend/Config/MongoConnect.js";
-import userRoute from "./Backend/Routes/userRoute.js";
+import managerRoute from "./Backend/Routes/managerRoute.js";
 import clientRoute from "./Backend/Routes/clientRoute.js";
 import CartRoute from "./Backend/Routes/CartRoute.js";
 import ProductsRoute from "./Backend/Routes/ProductsRoute.js";
@@ -21,9 +21,9 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'API de Usuários',
+      title: 'API de Clientes e Managers',
       version: '1.0.0',
-      description: 'API para gerenciamento de usuários com autenticação',
+      description: 'API para gerenciamento de clientes e managers com autenticação',
     },
     servers: [
       {
@@ -52,7 +52,7 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
-app.use('/', userRoute);
+app.use('/', managerRoute);
 app.use('/api', clientRoute);
 app.use('/cart', CartRoute);
 app.use('/api/products', ProductsRoute);

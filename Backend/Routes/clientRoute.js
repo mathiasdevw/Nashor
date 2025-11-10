@@ -1,14 +1,20 @@
 import express from "express"
-
 import {
     getClients,
     getClientPorId,
     createClient,
     updateClient,
     deleteClient,
+    loginClient,
+    registerClient,
+    recoverPasswordClient,
+    getClientProfile,
 } from "../Controller/clientController.js"
+import { authenticateToken } from "../Middleware/authMiddleware.js"
+import { authenticateManager } from "../Middleware/managerMiddleware.js"
 
-const router = express.Router();
+
+const router = express.Router()
 
 /**
  * @swagger
@@ -21,7 +27,27 @@ const router = express.Router();
  *           type: string
  *         name:
  *           type: string
+ *         cpf:
+ *           type: string
+ *         birthDate:
+ *           type: string
+ *           format: date
  *         email:
+ *           type: string
+ *         address:
+ *           type: object
+ *           properties:
+ *             street:
+ *               type: string
+ *             city:
+ *               type: string
+ *             state:
+ *               type: string
+ *             zipCode:
+ *               type: string
+ *             country:
+ *               type: string
+ *         phone:
  *           type: string
  *         createdAt:
  *           type: string
@@ -33,13 +59,120 @@ const router = express.Router();
  *       type: object
  *       required:
  *         - name
+ *         - cpf
+ *         - birthDate
  *         - email
+ *         - password
+ *         - address
+ *         - phone
  *       properties:
  *         name:
  *           type: string
+ *           minLength: 2
+ *         cpf:
+ *           type: string
+ *         birthDate:
+ *           type: string
+ *           format: date
  *         email:
  *           type: string
  *           format: email
+ *         password:
+ *           type: string
+ *           minLength: 6
+ *         address:
+ *           type: object
+ *           properties:
+ *             street:
+ *               type: string
+ *             city:
+ *               type: string
+ *             state:
+ *               type: string
+ *             zipCode:
+ *               type: string
+ *             country:
+ *               type: string
+ *         phone:
+ *           type: string
+ *
+ * /api/login-client:
+ *   post:
+ *     summary: Login de cliente
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: Email do cliente
+ *               password:
+ *                 type: string
+ *                 description: Senha do cliente
+ *     responses:
+ *       200:
+ *         description: Login realizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *                 client:
+ *                   $ref: '#/components/schemas/Client'
+ *       401:
+ *         description: Credenciais inválidas
+ */
+router.post("/login-client", loginClient)
+
+/**
+ * @swagger
+ * /api/login-client:
+ *   post:
+ *     summary: Login de cliente
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: Email do cliente
+ *               password:
+ *                 type: string
+ *                 description: Senha do cliente
+ *     responses:
+ *       200:
+ *         description: Login realizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *                 client:
+ *                   $ref: '#/components/schemas/Client'
+ *       401:
+ *         description: Credenciais inválidas
  */
 
 /**
@@ -48,6 +181,8 @@ const router = express.Router();
  *   get:
  *     summary: Lista todos os clientes
  *     tags: [Clients]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de clientes
@@ -58,7 +193,7 @@ const router = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/Client'
  */
-router.get("/clients", getClients)
+router.get("/clients", authenticateManager, getClients)
 
 /**
  * @swagger
@@ -66,6 +201,8 @@ router.get("/clients", getClients)
  *   get:
  *     summary: Obtém um cliente por ID
  *     tags: [Clients]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -83,14 +220,16 @@ router.get("/clients", getClients)
  *       404:
  *         description: Cliente não encontrado
  */
-router.get("/clients/:id", getClientPorId)
+router.get("/clients/:id", authenticateManager, getClientPorId)
 
 /**
  * @swagger
  * /api/clients:
  *   post:
- *     summary: Cria um novo cliente
+ *     summary: Cria um novo cliente (apenas managers)
  *     tags: [Clients]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -106,8 +245,64 @@ router.get("/clients/:id", getClientPorId)
  *               $ref: '#/components/schemas/Client'
  *       400:
  *         description: Erro na criação do cliente
+ *       403:
+ *         description: Acesso negado. Apenas managers podem criar clientes
  */
-router.post("/clients", createClient);
+/**
+ * @swagger
+ * /api/register-client:
+ *   post:
+ *     summary: Registra um novo cliente
+ *     tags: [Clients]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ClientInput'
+ *     responses:
+ *       201:
+ *         description: Cliente registrado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Client'
+ *       400:
+ *         description: Erro no registro do cliente
+ */
+/**
+ * @swagger
+ * /api/recover-password-client:
+ *   post:
+ *     summary: Recupera senha do cliente
+ *     tags: [Clients]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - cpf
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: Email do cliente
+ *               cpf:
+ *                 type: string
+ *                 description: CPF do cliente
+ *     responses:
+ *       200:
+ *         description: Nova senha enviada por e-mail
+ *       400:
+ *         description: Dados obrigatórios não fornecidos
+ *       404:
+ *         description: Cliente não encontrado
+ */
+router.post("/clients", authenticateManager, createClient)
+router.post("/register-client", registerClient)
+router.post("/recover-password-client", recoverPasswordClient)
 
 /**
  * @swagger
@@ -115,6 +310,8 @@ router.post("/clients", createClient);
  *   put:
  *     summary: Atualiza um cliente
  *     tags: [Clients]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -138,7 +335,7 @@ router.post("/clients", createClient);
  *       404:
  *         description: Cliente não encontrado
  */
-router.put("/clients/:id", updateClient)
+router.put("/clients/:id", authenticateManager, updateClient)
 
 /**
  * @swagger
@@ -146,6 +343,8 @@ router.put("/clients/:id", updateClient)
  *   delete:
  *     summary: Deleta um cliente
  *     tags: [Clients]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -159,6 +358,33 @@ router.put("/clients/:id", updateClient)
  *       404:
  *         description: Cliente não encontrado
  */
-router.delete("/clients/:id",deleteClient);
+router.delete("/clients/:id", authenticateManager, deleteClient)
+
+/**
+ * @swagger
+ * /api/clients/me:
+ *   get:
+ *     summary: Obtém o perfil do cliente autenticado
+ *     tags: [Clients]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dados do perfil do cliente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Client'
+ *       401:
+ *         description: Token não fornecido
+ *       404:
+ *         description: Cliente não encontrado
+ */
+router.get("/clients/me", authenticateToken, (req, res, next) => {
+  if (req.user.role !== 'client') {
+    return res.status(403).json({ message: 'Acesso negado. Apenas clientes podem acessar esta rota.' });
+  }
+  next();
+}, getClientProfile)
 
 export default router;

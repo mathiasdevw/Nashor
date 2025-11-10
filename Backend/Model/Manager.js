@@ -30,7 +30,7 @@ const addressSchema = new mongoose.Schema({
   }
 });
 
-const userSchema = new mongoose.Schema({
+const managerSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Nome é obrigatório'],
@@ -80,21 +80,23 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'manager'],
-    default: 'user'
+    enum: ['manager'],
+    default: 'manager'
   }
 }, {
   timestamps: true
 });
 
-userSchema.methods.toJSON = function() {
-  const user = this.toObject();
-  delete user.password;
-  return user;
+managerSchema.methods.toJSON = function() {
+  const manager = this.toObject();
+  delete manager.password;
+  return manager;
 };
 
-userSchema.methods.comparePassword = async function(candidatePassword) {
+managerSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-export default mongoose.model('User', userSchema);
+const Manager = mongoose.model('Manager', managerSchema);
+
+export default Manager;

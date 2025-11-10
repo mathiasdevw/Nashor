@@ -8,11 +8,11 @@ export const authenticateToken = (req, res, next) => {
     return res.status(401).json({ message: 'Token de acesso não fornecido' });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res.status(403).json({ message: 'Token inválido' });
     }
-    req.user = user;
+    req.user = decoded; // Usar req.user para ambos
     next();
   });
 };

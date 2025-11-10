@@ -1,15 +1,15 @@
 import express from "express"
 import {
-    getUsers,
-    getUserPorId,
-    createUser,
-    updateUser,
-    deleteUser,
-    loginUser,
-    registerUser,
-    recoverPassword,
-    getUserProfile,
-} from "../Controller/userController.js"
+    getManagers,
+    getManagerPorId,
+    createManager,
+    updateManager,
+    deleteManager,
+    loginManager,
+    registerManager,
+    recoverPasswordManager,
+    getManagerProfile,
+} from "../Controller/managerController.js"
 import { authenticateToken } from "../Middleware/authMiddleware.js"
 import { authenticateManager } from "../Middleware/managerMiddleware.js"
 
@@ -20,7 +20,7 @@ const router = express.Router()
  * @swagger
  * components:
  *   schemas:
- *     User:
+ *     Manager:
  *       type: object
  *       properties:
  *         _id:
@@ -55,7 +55,7 @@ const router = express.Router()
  *         updatedAt:
  *           type: string
  *           format: date-time
- *     UserInput:
+ *     ManagerInput:
  *       type: object
  *       required:
  *         - name
@@ -96,9 +96,9 @@ const router = express.Router()
  *         phone:
  *           type: string
  *
- * /api/login:
+ * /api/login-manager:
  *   post:
- *     summary: Login de usuário
+ *     summary: Login de manager
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -112,10 +112,10 @@ const router = express.Router()
  *             properties:
  *               email:
  *                 type: string
- *                 description: Email do usuário
+ *                 description: Email do manager
  *               password:
  *                 type: string
- *                 description: Senha do usuário
+ *                 description: Senha do manager
  *     responses:
  *       200:
  *         description: Login realizado com sucesso
@@ -128,39 +128,39 @@ const router = express.Router()
  *                   type: string
  *                 token:
  *                   type: string
- *                 user:
- *                   $ref: '#/components/schemas/User'
+ *                 manager:
+ *                   $ref: '#/components/schemas/Manager'
  *       401:
  *         description: Credenciais inválidas
  */
-router.post("/api/login", loginUser)
+router.post("/api/login-manager", loginManager)
 
 /**
  * @swagger
- * /api/users:
+ * /api/managers:
  *   get:
- *     summary: Lista todos os usuários
- *     tags: [Users]
+ *     summary: Lista todos os managers
+ *     tags: [Managers]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de usuários
+ *         description: Lista de managers
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/User'
+ *                 $ref: '#/components/schemas/Manager'
  */
-router.get("/api/users", authenticateManager, getUsers)
+router.get("/api/managers", authenticateManager, getManagers)
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /api/managers/{id}:
  *   get:
- *     summary: Obtém um usuário por ID
- *     tags: [Users]
+ *     summary: Obtém um manager por ID
+ *     tags: [Managers]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -169,25 +169,25 @@ router.get("/api/users", authenticateManager, getUsers)
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do usuário
+ *         description: ID do manager
  *     responses:
  *       200:
- *         description: Dados do usuário
+ *         description: Dados do manager
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/Manager'
  *       404:
- *         description: Usuário não encontrado
+ *         description: Manager não encontrado
  */
-router.get("/api/users/:id", authenticateManager, getUserPorId)
+router.get("/api/managers/:id", authenticateManager, getManagerPorId)
 
 /**
  * @swagger
- * /api/users:
+ * /api/managers:
  *   post:
- *     summary: Cria um novo usuário (apenas managers)
- *     tags: [Users]
+ *     summary: Cria um novo manager (apenas managers)
+ *     tags: [Managers]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -195,47 +195,47 @@ router.get("/api/users/:id", authenticateManager, getUserPorId)
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UserInput'
+ *             $ref: '#/components/schemas/ManagerInput'
  *     responses:
  *       201:
- *         description: Usuário criado com sucesso
+ *         description: Manager criado com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/Manager'
  *       400:
- *         description: Erro na criação do usuário
+ *         description: Erro na criação do manager
  *       403:
- *         description: Acesso negado. Apenas managers podem criar usuários
+ *         description: Acesso negado. Apenas managers podem criar managers
  */
 /**
  * @swagger
- * /api/register:
+ * /api/register-manager:
  *   post:
- *     summary: Registra um novo usuário comum
- *     tags: [Users]
+ *     summary: Registra um novo manager
+ *     tags: [Managers]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UserInput'
+ *             $ref: '#/components/schemas/ManagerInput'
  *     responses:
  *       201:
- *         description: Usuário registrado com sucesso
+ *         description: Manager registrado com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/Manager'
  *       400:
- *         description: Erro no registro do usuário
+ *         description: Erro no registro do manager
  */
 /**
  * @swagger
- * /api/recover-password:
+ * /api/recover-password-manager:
  *   post:
- *     summary: Recupera senha do usuário
- *     tags: [Users]
+ *     summary: Recupera senha do manager
+ *     tags: [Managers]
  *     requestBody:
  *       required: true
  *       content:
@@ -248,28 +248,28 @@ router.get("/api/users/:id", authenticateManager, getUserPorId)
  *             properties:
  *               email:
  *                 type: string
- *                 description: Email do usuário
+ *                 description: Email do manager
  *               cpf:
  *                 type: string
- *                 description: CPF do usuário
+ *                 description: CPF do manager
  *     responses:
  *       200:
  *         description: Nova senha enviada por e-mail
  *       400:
  *         description: Dados obrigatórios não fornecidos
  *       404:
- *         description: Usuário não encontrado
+ *         description: Manager não encontrado
  */
-router.post("/api/users", authenticateManager, createUser)
-router.post("/api/register", registerUser)
-router.post("/api/recover-password", recoverPassword)
+router.post("/api/managers", authenticateManager, createManager)
+router.post("/api/register-manager", registerManager)
+router.post("/api/recover-password-manager", recoverPasswordManager)
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /api/managers/{id}:
  *   put:
- *     summary: Atualiza um usuário
- *     tags: [Users]
+ *     summary: Atualiza um manager
+ *     tags: [Managers]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -278,31 +278,31 @@ router.post("/api/recover-password", recoverPassword)
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do usuário
+ *         description: ID do manager
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UserInput'
+ *             $ref: '#/components/schemas/ManagerInput'
  *     responses:
  *       200:
- *         description: Usuário atualizado com sucesso
+ *         description: Manager atualizado com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/Manager'
  *       404:
- *         description: Usuário não encontrado
+ *         description: Manager não encontrado
  */
-router.put("/api/users/:id", authenticateManager, updateUser)
+router.put("/api/managers/:id", authenticateManager, updateManager)
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /api/managers/{id}:
  *   delete:
- *     summary: Deleta um usuário
- *     tags: [Users]
+ *     summary: Deleta um manager
+ *     tags: [Managers]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -311,35 +311,35 @@ router.put("/api/users/:id", authenticateManager, updateUser)
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do usuário
+ *         description: ID do manager
  *     responses:
  *       200:
- *         description: Usuário deletado com sucesso
+ *         description: Manager deletado com sucesso
  *       404:
- *         description: Usuário não encontrado
+ *         description: Manager não encontrado
  */
-router.delete("/api/users/:id", authenticateManager, deleteUser)
+router.delete("/api/managers/:id", authenticateManager, deleteManager)
 
 /**
  * @swagger
- * /api/users/me:
+ * /api/managers/me:
  *   get:
- *     summary: Obtém o perfil do usuário autenticado
- *     tags: [Users]
+ *     summary: Obtém o perfil do manager autenticado
+ *     tags: [Managers]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Dados do perfil do usuário
+ *         description: Dados do perfil do manager
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/Manager'
  *       401:
  *         description: Token não fornecido
  *       404:
- *         description: Usuário não encontrado
+ *         description: Manager não encontrado
  */
-router.get("/api/users/me", authenticateToken, getUserProfile)
+router.get("/api/managers/me", authenticateToken, getManagerProfile)
 
 export default router;
