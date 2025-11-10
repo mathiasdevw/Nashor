@@ -1,5 +1,6 @@
-const Cart = require('../Model/CartModel.js');
-const Product = require('../Model/ProductsModel.js'); 
+import Cart from '../Model/CartModel.js';
+import Product from '../Model/ProductsModel.js';
+
 //Controller do carrinho de compras
 
 class CartController {
@@ -111,4 +112,4 @@ class CartController {
   }
 }
 
-module.exports = CartController;
+export default CartController;

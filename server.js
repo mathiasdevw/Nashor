@@ -4,6 +4,10 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import connectDB from "./Backend/Config/MongoConnect.js";
 import userRoute from "./Backend/Routes/userRoute.js";
+import clientRoute from "./Backend/Routes/clientRoute.js";
+import CartRoute from "./Backend/Routes/CartRoute.js";
+import ProductsRoute from "./Backend/Routes/ProductsRoute.js";
+import PaymentRoute from "./Backend/Routes/PaymentRoute.js";
 
 dotenv.config();
 
@@ -49,6 +53,10 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.use('/', userRoute);
+app.use('/api', clientRoute);
+app.use('/cart', CartRoute);
+app.use('/api/products', ProductsRoute);
+app.use('/payment', PaymentRoute);
 
 app.get("/", (req, res) => {
   res.send("Servidor funcionando! Acesse /api-docs para a documentação Swagger.");

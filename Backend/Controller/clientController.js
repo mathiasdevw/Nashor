@@ -1,8 +1,8 @@
-import client from "../Model/client"
+import Client from "../Model/client.js"
 
 export const getClients = async (req, res) => {
     try{
-        const c = await client.find();
+        const c = await Client.find();
         res.json(c);
     } catch (error) {
         res.status(500).json({message: "Erro ao procurar clientes",error})
@@ -12,7 +12,7 @@ export const getClients = async (req, res) => {
 
 export const getClientPorId = async (req , res) => {
     try {
-    const c = await client.findById(req.params.id);
+    const c = await Client.findById(req.params.id);
     if(!c) return res.status(404).json({message: "Cliente não foi encontradp", error})
     res.json(c)
     }
@@ -23,7 +23,7 @@ export const getClientPorId = async (req , res) => {
 
 export const createClient = async (req, res) => {
     try{
-        const newC = new client(req.body);
+        const newC = new Client(req.body);
         const savedC = await newC.save();
         res.status(201).json(savedC);
     } catch (error) {
@@ -33,7 +33,7 @@ export const createClient = async (req, res) => {
 
 export const updateClient = async (req, res) =>{
     try{
-        const updateC = await client.findByIdAndUpdate(req.params.id, req.body, {new: true})
+        const updateC = await Client.findByIdAndUpdate(req.params.id, req.body, {new: true})
         if(!updateC) return res.status(404).json({message: "Cliente não econtrado para atualizar"});
         res.json(updateC);
     } catch(error) {
@@ -43,7 +43,7 @@ export const updateClient = async (req, res) =>{
 
 export const deleteClient = async (req, res) =>{
     try{
-        const deleteC = await client.findByIdAndDelete(req.params.id);
+        const deleteC = await Client.findByIdAndDelete(req.params.id);
         if(!deleteC) return res.status(404).json({ message: "Cliente não encontrado"});
         res.json({message: "Cliente removido!"})
     } catch (error) {

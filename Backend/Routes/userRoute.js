@@ -8,6 +8,7 @@ import {
     loginUser,
     registerUser,
     recoverPassword,
+    getUserProfile,
 } from "../Controller/userController.js"
 import { authenticateToken } from "../Middleware/authMiddleware.js"
 import { authenticateManager } from "../Middleware/managerMiddleware.js"
@@ -318,5 +319,27 @@ router.put("/api/users/:id", authenticateManager, updateUser)
  *         description: Usuário não encontrado
  */
 router.delete("/api/users/:id", authenticateManager, deleteUser)
+
+/**
+ * @swagger
+ * /api/users/me:
+ *   get:
+ *     summary: Obtém o perfil do usuário autenticado
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dados do perfil do usuário
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Token não fornecido
+ *       404:
+ *         description: Usuário não encontrado
+ */
+router.get("/api/users/me", authenticateToken, getUserProfile)
 
 export default router;

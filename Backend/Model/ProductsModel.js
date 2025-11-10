@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 //Model responsavel pelos produtos
@@ -19,7 +19,7 @@ const ProductsSchema = new Schema(
     sizes: [
       {
         size: {
-          type: String, 
+          type: String,
           required: true,
         },
         quantity: { // Estoque para o tamanho específico
@@ -29,7 +29,7 @@ const ProductsSchema = new Schema(
         },
       },
     ],
-    
+
     photo: {
       type: String,
       required: false,
@@ -42,4 +42,5 @@ const ProductsSchema = new Schema(
   }
 );
 
-module.exports = mongoose.model('Products', productsSchema);
+const Product = mongoose.model('Products', ProductsSchema);
+export default Product;

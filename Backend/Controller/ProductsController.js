@@ -1,4 +1,4 @@
-const ProductsModel = require('../Model/ProductsModel');
+import ProductsModel from '../Model/ProductsModel.js';
 //Controller responsavel pelos produtos
 
 class ProductsController {
@@ -105,4 +105,4 @@ class ProductsController {
   }
 }
 
-module.exports = ProductsController;
+export default ProductsController;

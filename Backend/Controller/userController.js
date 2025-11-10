@@ -153,3 +153,15 @@ export const recoverPassword = async (req, res) => {
     res.status(500).json({ message: "Erro ao recuperar senha", error: error.message });
   }
 };
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "Usuário não encontrado" });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Erro interno do servidor", error: error.message });
+  }
+};

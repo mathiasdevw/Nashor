@@ -4,10 +4,14 @@ import Order from '../Model/OrderModel.js';
 import Product from '../Model/ProductsModel.js';
 
 // Importe seu serviço de e-mail
-import { sendAccessEmail } from '../Service/EmailService.js'; 
+import { sendAccessEmail } from '../Service/EmailService.js';
 
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+let stripe;
+try {
+  stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+} catch (error) {
+  console.warn('Stripe not configured:', error.message);
+}
 
 //Striper
 
