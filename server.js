@@ -8,6 +8,7 @@ import clientRoute from "./Backend/Routes/clientRoute.js";
 import CartRoute from "./Backend/Routes/CartRoute.js";
 import ProductsRoute from "./Backend/Routes/ProductsRoute.js";
 import PaymentRoute from "./Backend/Routes/PaymentRoute.js";
+import WishlistRoute from "./Backend/Routes/WishlistRoute.js"
 
 dotenv.config();
 
@@ -57,6 +58,7 @@ app.use('/api', clientRoute);
 app.use('/cart', CartRoute);
 app.use('/api/products', ProductsRoute);
 app.use('/payment', PaymentRoute);
+app.use('/wishlist', WishlistRoute);
 
 app.get("/", (req, res) => {
   res.send("Servidor funcionando! Acesse /api-docs para a documentação Swagger.");

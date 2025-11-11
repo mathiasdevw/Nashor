@@ -1,4 +1,4 @@
-import WishList from "../Model/wishlist";
+import WishList from "../Model/wishlist.js";
 
 
 /*
