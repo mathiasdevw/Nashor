@@ -222,7 +222,7 @@ router.get("/clients", authenticateManager, getClients)
  */
 router.get("/clients/me", authenticateToken, getClientProfile)
 
-router.get("/clients/:id", authenticateManager, getClientPorId)
+router.get("/clients/:id([0-9a-fA-F]{24})", authenticateManager, getClientPorId)
 
 /**
  * @swagger
@@ -337,7 +337,7 @@ router.post("/recover-password-client", recoverPasswordClient)
  *       404:
  *         description: Cliente não encontrado
  */
-router.put("/clients/:id", authenticateManager, updateClient)
+router.put("/clients/:id([0-9a-fA-F]{24})", authenticateManager, updateClient)
 
 /**
  * @swagger
@@ -360,7 +360,7 @@ router.put("/clients/:id", authenticateManager, updateClient)
  *       404:
  *         description: Cliente não encontrado
  */
-router.delete("/clients/:id", authenticateManager, deleteClient)
+router.delete("/clients/:id([0-9a-fA-F]{24})", authenticateManager, deleteClient)
 
 
 

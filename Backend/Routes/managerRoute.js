@@ -180,7 +180,7 @@ router.get("/api/managers", authenticateManager, getManagers)
  *       404:
  *         description: Manager não encontrado
  */
-router.get("/api/managers/:id", authenticateManager, getManagerPorId)
+router.get("/api/managers/:id([0-9a-fA-F]{24})", authenticateManager, getManagerPorId)
 
 /**
  * @swagger
@@ -295,7 +295,7 @@ router.post("/api/recover-password-manager", recoverPasswordManager)
  *       404:
  *         description: Manager não encontrado
  */
-router.put("/api/managers/:id", authenticateManager, updateManager)
+router.put("/api/managers/:id([0-9a-fA-F]{24})", authenticateManager, updateManager)
 
 /**
  * @swagger
@@ -318,7 +318,7 @@ router.put("/api/managers/:id", authenticateManager, updateManager)
  *       404:
  *         description: Manager não encontrado
  */
-router.delete("/api/managers/:id", authenticateManager, deleteManager)
+router.delete("/api/managers/:id([0-9a-fA-F]{24})", authenticateManager, deleteManager)
 
 /**
  * @swagger

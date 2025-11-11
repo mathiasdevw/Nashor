@@ -64,7 +64,7 @@ class CartController {
       const cart = await Cart.findOne({ user: userId })
         .populate({
           path: 'items.product',
-          select: 'name price photo', 
+          select: 'name price images',
         });
 
       if (!cart) {
