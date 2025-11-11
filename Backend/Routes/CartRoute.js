@@ -11,7 +11,7 @@ const router = express.Router();
  *     CartItem:
  *       type: object
  *       properties:
- *         productId:
+ *         product:
  *           type: string
  *         quantity:
  *           type: integer
@@ -22,14 +22,12 @@ const router = express.Router();
  *       properties:
  *         _id:
  *           type: string
- *         userId:
+ *         user:
  *           type: string
  *         items:
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/CartItem'
- *         totalPrice:
- *           type: number
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -41,6 +39,7 @@ const router = express.Router();
  *       required:
  *         - productId
  *         - quantity
+ *         - size
  *       properties:
  *         productId:
  *           type: string
@@ -62,13 +61,20 @@ router.use(authenticateToken);
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Dados do carrinho
+ *         description: Dados do carrinho e total
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Cart'
+ *               type: object
+ *               properties:
+ *                 cart:
+ *                   $ref: '#/components/schemas/Cart'
+ *                 total:
+ *                   type: number
  *       401:
  *         description: Token não fornecido
+ *       404:
+ *         description: Carrinho não encontrado
  */
 router.get('/', CartController.getCart);
 
@@ -94,9 +100,11 @@ router.get('/', CartController.getCart);
  *             schema:
  *               $ref: '#/components/schemas/Cart'
  *       400:
- *         description: Erro ao adicionar item
+ *         description: Erro ao adicionar item (estoque insuficiente, tamanho indisponível)
  *       401:
  *         description: Token não fornecido
+ *       404:
+ *         description: Produto não encontrado
  */
 router.post('/add', CartController.addItemToCart);
 
@@ -116,13 +124,14 @@ router.post('/add', CartController.addItemToCart);
  *             type: object
  *             required:
  *               - productId
+ *               - size
  *             properties:
  *               productId:
  *                 type: string
  *                 description: ID do produto a remover
  *               size:
  *                 type: string
- *                 description: Tamanho do produto (opcional)
+ *                 description: Tamanho do produto
  *     responses:
  *       200:
  *         description: Item removido do carrinho
@@ -134,6 +143,8 @@ router.post('/add', CartController.addItemToCart);
  *         description: Erro ao remover item
  *       401:
  *         description: Token não fornecido
+ *       404:
+ *         description: Carrinho não encontrado
  */
 router.delete('/remove', CartController.removeItemFromCart);
 

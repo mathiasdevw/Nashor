@@ -113,7 +113,7 @@ router.get('/', ProductController.getAllProducts);
  */
 router.get('/:id([0-9a-fA-F]{24})', ProductController.getProductById);
 
-router.use(authenticateToken, authenticateManager);
+router.use(authenticateToken);
 
 /**
  * @swagger
@@ -141,7 +141,7 @@ router.use(authenticateToken, authenticateManager);
  *       403:
  *         description: Acesso negado
  */
-router.post('/', authenticateToken, authenticateManager, ProductController.createProduct); // CREATE
+router.post('/', authenticateManager, ProductController.createProduct); // CREATE
 
 /**
  * @swagger
@@ -176,7 +176,7 @@ router.post('/', authenticateToken, authenticateManager, ProductController.creat
  *       403:
  *         description: Acesso negado
  */
-router.put('/:id([0-9a-fA-F]{24})', authenticateToken, authenticateManager, ProductController.updateProductInfo);  // UPDATE (informacoes basicas)
+router.put('/:id([0-9a-fA-F]{24})', authenticateManager, ProductController.updateProductInfo);  // UPDATE (informacoes basicas)
 
 /**
  * @swagger
@@ -221,7 +221,7 @@ router.put('/:id([0-9a-fA-F]{24})', authenticateToken, authenticateManager, Prod
  *       403:
  *         description: Acesso negado
  */
-router.patch('/stock/:id([0-9a-fA-F]{24})', authenticateToken, authenticateManager, ProductController.updateStockBySize);// UPDATE (Estoque)
+router.patch('/stock/:id([0-9a-fA-F]{24})', authenticateManager, ProductController.updateStockBySize);// UPDATE (Estoque)
 
 /**
  * @swagger
@@ -246,6 +246,6 @@ router.patch('/stock/:id([0-9a-fA-F]{24})', authenticateToken, authenticateManag
  *       403:
  *         description: Acesso negado
  */
-router.delete('/:id([0-9a-fA-F]{24})', authenticateToken, authenticateManager, ProductController.deleteProduct); // DELETE
+router.delete('/:id([0-9a-fA-F]{24})', authenticateManager, ProductController.deleteProduct); // DELETE
 
 export default router;

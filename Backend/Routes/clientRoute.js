@@ -137,46 +137,6 @@ router.post("/login-client", loginClient)
 
 /**
  * @swagger
- * /api/login-client:
- *   post:
- *     summary: Login de cliente
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 description: Email do cliente
- *               password:
- *                 type: string
- *                 description: Senha do cliente
- *     responses:
- *       200:
- *         description: Login realizado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 token:
- *                   type: string
- *                 client:
- *                   $ref: '#/components/schemas/Client'
- *       401:
- *         description: Credenciais inválidas
- */
-
-/**
- * @swagger
  * /api/clients:
  *   get:
  *     summary: Lista todos os clientes
@@ -197,9 +157,31 @@ router.get("/clients", authenticateManager, getClients)
 
 /**
  * @swagger
+ * /api/clients/me:
+ *   get:
+ *     summary: Obtém o perfil do cliente autenticado
+ *     tags: [Clients]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dados do perfil do cliente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Client'
+ *       401:
+ *         description: Token não fornecido
+ *       404:
+ *         description: Cliente não encontrado
+ */
+router.get("/clients/me", authenticateToken, getClientProfile)
+
+/**
+ * @swagger
  * /api/clients/{id}:
  *   get:
- *     summary: Obtém um cliente por ID
+ *     summary: Obtém um cliente por ID (apenas managers)
  *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
@@ -217,11 +199,11 @@ router.get("/clients", authenticateManager, getClients)
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Client'
+ *       403:
+ *         description: Acesso negado
  *       404:
  *         description: Cliente não encontrado
  */
-router.get("/clients/me", authenticateToken, getClientProfile)
-
 router.get("/clients/:id([0-9a-fA-F]{24})", authenticateManager, getClientPorId)
 
 /**
@@ -364,28 +346,6 @@ router.delete("/clients/:id([0-9a-fA-F]{24})", authenticateManager, deleteClient
 
 
 
-/**
- * @swagger
- * /api/create-user-pf:
- *   post:
- *     summary: Cria um usuário PF (Pessoa Física)
- *     tags: [Clients]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/ClientInput'
- *     responses:
- *       201:
- *         description: Usuário PF criado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Client'
- *       400:
- *         description: Erro na criação do usuário PF
- */
 router.post("/create-user-pf", registerClient)
 
 export default router;
