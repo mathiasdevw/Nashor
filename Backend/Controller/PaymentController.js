@@ -4,7 +4,7 @@ import Order from '../Model/OrderModel.js';
 import Product from '../Model/ProductsModel.js';
 
 // Importe seu serviço de e-mail
-import { sendAccessEmail } from '../Service/emailService.js';
+import { sendAccessEmail } from '../Service/EmailService.js';
 
 let stripe;
 try {
